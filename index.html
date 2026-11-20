@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#0b2f7a"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; form-action 'none'; base-uri 'none'; object-src 'none'">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="営業入力">
+<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png"><title>営業入力</title>
+<style>
+:root{--gold:#FFD34F;--navy:#071c5c;--navy2:#0a2a7a}
+*{box-sizing:border-box}
+html,body{margin:0;background:#0b2f7a;color:#fff;font-family:-apple-system,"Hiragino Sans",sans-serif;-webkit-text-size-adjust:100%}
+body{min-height:100vh;background:linear-gradient(180deg,#0a2a86,#061a5a);padding:0 12px calc(28px + env(safe-area-inset-bottom))}
+header{margin:0 -12px 10px;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;background:linear-gradient(165deg,#0b2a78,#020b2c);border-bottom:2px solid #f5c542;font-family:"Hiragino Mincho ProN",serif;font-weight:900;font-size:24px;color:var(--gold);letter-spacing:.08em}
+header small{display:block;font-family:-apple-system,sans-serif;font-size:13px;font-weight:600;color:#cfeeff;letter-spacing:0}
+.plate{background:linear-gradient(165deg,#0b2a78,#020b2c);border:2px solid #f5c542;border-radius:16px;padding:10px 12px;margin:0 0 10px}
+.big{font-size:34px;font-weight:900;line-height:1.15}.big small{font-size:18px;margin-left:3px}
+.lab{font-size:14px;font-weight:800;color:#FFE27A}
+.sub{font-size:15px;font-weight:700;color:#e6f2ff;margin-top:2px}
+.neg{color:#ff8a5c}.pos{color:#79f0a8}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 10px}
+.tile{background:linear-gradient(165deg,#0b2a78,#020b2c);border:2px solid #f5c542;border-radius:14px;padding:7px 10px}
+.tile b{display:block;font-size:26px;font-weight:900;line-height:1.2}.tile b small{font-size:14px;margin-left:2px}
+.tile span{font-size:14px;color:#cfeeff;font-weight:700}
+.kinds{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 8px}
+.kinds button{padding:14px 4px;border-radius:14px;border:2px solid #f5c542;background:var(--navy2);color:#fff;font-size:18px;font-weight:900}
+.kinds button[aria-pressed=true]{background:linear-gradient(180deg,#fff2b0,#FFD34F);color:#07245f}
+.kinds button.idle[aria-pressed=true]{background:linear-gradient(180deg,#ffd0c0,#ff8a5c);color:#3a0a00}
+#fare{width:100%;font-size:34px;font-weight:900;padding:10px 14px;border-radius:14px;border:2px solid #f5c542;background:#fff;color:#07245f;margin:0 0 8px}
+#reg{width:100%;padding:16px;border-radius:16px;border:2px solid #b88a1e;background:linear-gradient(180deg,#fff2b0,#FFD34F);color:#07245f;font-size:22px;font-weight:900}
+#reg:disabled{opacity:.55}
+#msg{min-height:22px;margin:6px 2px;font-size:15px;font-weight:700}
+#msg.err{color:#ff8a5c}#msg.ok{color:#79f0a8}
+h3{font-family:"Hiragino Mincho ProN",serif;font-size:19px;color:#FFE27A;margin:14px 0 6px}
+.row{display:flex;align-items:center;gap:8px;padding:8px 4px;border-top:1px solid rgba(255,255,255,.18);font-size:17px;font-weight:700}
+.row:first-child{border-top:0}.row .t{width:52px;color:#cfeeff}.row .k{width:62px}.row .f{flex:1;text-align:right}
+.row.del{opacity:.55;text-decoration:line-through}
+.row button{padding:6px 10px;border-radius:10px;border:1.5px solid #f5c542;background:var(--navy2);color:#fff;font-size:14px;font-weight:700}
+.edit{display:flex;flex-wrap:wrap;gap:6px;padding:8px 4px;border-top:1px solid rgba(255,255,255,.18)}
+.edit select,.edit input{font-size:18px;padding:8px;border-radius:10px;border:2px solid #f5c542;background:#fff;color:#07245f;min-width:0}
+.edit input.fare{width:110px}.edit input.time{width:100px}
+.edit button{padding:8px 12px;border-radius:10px;border:1.5px solid #f5c542;background:var(--navy2);color:#fff;font-size:14px;font-weight:700}
+.note{font-size:13px;color:#cfeeff;margin:4px 2px}
+#savebar{font-size:14px;font-weight:700;margin:2px 0 8px;padding:8px 10px;border-radius:12px;border:2px solid #79f0a8;color:#79f0a8;line-height:1.5}#savebar.warn{color:#FFE27A;border-color:#FFD34F}#savebar.bad{color:#ffd0c0;border-color:#ff8a5c;background:#3a0a00}
+.btn2{width:100%;min-height:48px;margin:6px 0;padding:12px;border-radius:14px;border:2px solid #f5c542;background:var(--navy2);color:#fff;font-size:16px;font-weight:800}
+#resetbtn{width:100%;min-height:56px;margin:14px 0 4px;padding:14px;border-radius:14px;border:2px solid #ff8a5c;background:#3a0a00;color:#ffd0c0;font-size:17px;font-weight:800}
+#ov{position:fixed;inset:0;background:rgba(0,10,50,.8);display:flex;align-items:center;justify-content:center;padding:20px;z-index:50}#ov[hidden]{display:none}
+.dlg{background:linear-gradient(165deg,#0b2a78,#020b2c);border:2px solid #f5c542;border-radius:18px;padding:16px;max-width:420px;width:100%}.dlg b{font-size:20px;color:#FFE27A}.dlg p{font-size:16px;line-height:1.6}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}.two button{padding:14px;border-radius:12px;border:2px solid #f5c542;font-size:17px;font-weight:800;background:var(--navy2);color:#fff}#ovy{background:#ff8a5c!important;color:#3a0a00!important}
+#undo{margin-left:8px;padding:6px 12px;border-radius:10px;border:1.5px solid #f5c542;background:var(--navy2);color:#fff;font-size:14px;font-weight:800}
+textarea{width:100%;height:110px;font-size:12px;border-radius:10px;border:2px solid #f5c542;padding:8px;background:#fff;color:#07245f}
+</style></head><body>
+<header>営業入力<small>iPhoneだけで使えます（通信・Macは不要）。運転中は使わず、停車中に</small></header>
+<div id="savebar">保存の確認中…</div>
+<div class="plate"><div class="lab">税込累計（暫定売上）</div><div class="big" id="total">0<small>円</small></div>
+ <div class="sub" id="est">概算の税抜営収（参考）約0円</div><div class="sub" id="diff">1出番目標84,000円との差 —</div><div class="sub" id="pct">目標達成率 0％</div></div>
+<div class="g2"><div class="tile"><span>GO無線</span><b id="go">0<small>件</small></b><span id="gop">0％</span></div><div class="tile"><span>手上げ</span><b id="te">0<small>件</small></b><span id="tep">0％</span></div>
+ <div class="tile"><span>乗車回数（空転を除く）</span><b id="rides">0<small>回</small></b></div><div class="tile"><span>空転</span><b id="idle">0<small>回</small></b><span id="idleamt">0円</span></div></div>
+<div class="kinds" id="kinds"><button type="button" data-k="go" aria-pressed="true">GO無線</button><button type="button" data-k="teage" aria-pressed="false">手上げ</button><button type="button" data-k="idle" class="idle" aria-pressed="false">空転</button></div>
+<input id="fare" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="料金（税込・円）" enterkeyhint="done" aria-label="料金">
+<button id="reg" type="button">この乗車を登録</button>
+<div id="msg" role="status"></div>
+<h3>今日の履歴</h3><div class="plate" id="hist"><div class="note">まだありません</div></div>
+<div class="note" id="undoarea"></div>
+<button id="resetbtn" type="button">本日の入力を一括リセット</button>
+<div class="note">リセットしても、履歴はバックアップされ、元に戻せます。</div>
+<h3>バックアップ・Macへ送る（任意）</h3>
+<button class="btn2" id="exp" type="button">Macへ送る（入力ファイルを書き出す）</button>
+<button class="btn2" id="bak" type="button">全データのバックアップを書き出す</button>
+<button class="btn2" id="imp" type="button">バックアップから戻す</button>
+<input id="impf" type="file" accept=".json,.txt,application/json,text/plain" hidden>
+<textarea id="out" readonly hidden></textarea>
+<div class="note" id="syncnote"></div>
+<h3>端末内の保存の確認（実機チェック）</h3>
+<div class="plate" id="diag"><div class="note">確認中…</div></div>
+<button class="btn2" id="st" type="button">保存テストを書き込む（確認用・営業データには入りません）</button>
+<div class="note">使いかた：①「保存テストを書き込む」→ ②機内モードにして、アプリを終了 →③ iPhoneを再起動 → ④もう一度開いて、この欄の「保存テスト」が ✓ なら、再起動後も、保存が残っています。</div>
+<div id="ov" hidden><div class="dlg"><b>本日の入力を、一括リセットしますか？</b><p id="ovp"></p><div class="two"><button id="ovy" type="button">リセットする</button><button id="ovn" type="button">やめる</button></div></div></div>
+<script>
+/* 官兵衛 営業入力（iPhone単体版）。入力・保存・集計・修正・削除・リセットは、すべて、この端末の中だけで動く（通信しない）。保存先：端末内（localStorage＋IndexedDB の二重）。 */
+var G = 84000, TAX = 1.1, DAY_CHANGE_HOUR = 6, KEYS = { e: 'kb2_events', r: 'kb2_resets', b: 'kb2_backups', k: 'kb2_kind', x: 'kb2_exported' };
+var S = { events: [], resets: [], backups: [] }, kind = 'go', editing = {}, lockUntil = 0, storageOk = true, lastSave = '';
+var CTX = { standalone: false, inApp: false, priv: false, proven: false };   /* 開き方・保存の持続の確認（実機で、記録が消えた原因の切り分け） */
+function esc(t) { return String(t).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+function $(i) { return document.getElementById(i); }
+function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { storageOk = false; return null; } }
+function lsSet(k, v) { try { localStorage.setItem(k, v); return true; } catch (e) { storageOk = false; return false; } }
+function parse(s) { try { var v = JSON.parse(s || '[]'); return Array.isArray(v) ? v : []; } catch (e) { return []; } }
+function p2(n) { return ('0' + n).slice(-2); }
+function ymd(d) { return d.getFullYear() + '-' + p2(d.getMonth() + 1) + '-' + p2(d.getDate()); }
+function nowStr() { var d = new Date(); return ymd(d) + ' ' + p2(d.getHours()) + ':' + p2(d.getMinutes()); }
+function bizDate(at) { var m = /^(\d{4})-(\d\d)-(\d\d) (\d\d):(\d\d)$/.exec(at); if (!m) return ''; var d = new Date(+m[1], +m[2] - 1, +m[3], +m[4], +m[5]); if (d.getHours() < DAY_CHANGE_HOUR) d.setDate(d.getDate() - 1); return ymd(d); }
+function newId() { var d = new Date(); return 'P' + d.getFullYear() + p2(d.getMonth() + 1) + p2(d.getDate()) + p2(d.getHours()) + p2(d.getMinutes()) + p2(d.getSeconds()) + '-' + Math.floor(1000 + Math.random() * 9000); }
+function yen(n) { return n.toLocaleString('ja-JP'); }
+var KJ = { go: 'GO無線', teage: '手上げ', idle: '空転' }, KOUT = { go: 'GO無線', teage: '手上げ', idle: '空転' }, OPJ = { add: '追加', edit: '修正', 'delete': '削除', restore: '取消' };
+
+/* ---- 保存（二重：localStorage＋IndexedDB）。書いたあと、読み戻して、確認する ---- */
+function save() {
+  var a = JSON.stringify(S.events), r = JSON.stringify(S.resets), b = JSON.stringify(S.backups);
+  var ok = lsSet(KEYS.e, a) && lsSet(KEYS.r, r) && lsSet(KEYS.b, b);
+  ok = ok && lsGet(KEYS.e) === a && lsGet(KEYS.r) === r;                         /* 読み戻して一致を確認 */
+  mirror(a, r, b);
+  lastSave = p2(new Date().getHours()) + ':' + p2(new Date().getMinutes()) + ':' + p2(new Date().getSeconds());
+  storageOk = ok;
+  clearTimeout(save.t); save.t = setTimeout(function () { if (typeof diagnose === 'function') diagnose(); }, 350);     /* 実機チェック欄も、保存のたびに更新 */
+  return ok;
+}
+function mirror(a, r, b) {
+  try {
+    var q = indexedDB.open('kanbei-input', 2);
+    q.onupgradeneeded = function () { if (!q.result.objectStoreNames.contains('s')) q.result.createObjectStore('s'); };
+    q.onsuccess = function () { try { var t = q.result.transaction('s', 'readwrite'); t.objectStore('s').put({ e: a, r: r, b: b, at: Date.now() }, 'state'); t.oncomplete = function () { q.result.close(); }; } catch (e) {} };
+  } catch (e) {}
+}
+function restoreFromMirror(done) {
+  try {
+    var q = indexedDB.open('kanbei-input', 2);
+    q.onupgradeneeded = function () { if (!q.result.objectStoreNames.contains('s')) q.result.createObjectStore('s'); };
+    q.onerror = function () { done(false); };
+    q.onsuccess = function () { try { var g = q.result.transaction('s').objectStore('s').get('state'); g.onsuccess = function () { var v = g.result; q.result.close(); if (v && parse(v.e).length) { S.events = parse(v.e); S.resets = parse(v.r); S.backups = parse(v.b); done(true); } else done(false); }; g.onerror = function () { done(false); }; } catch (e) { done(false); } };
+  } catch (e) { done(false); }
+}
+function load() { S.events = parse(lsGet(KEYS.e)); S.resets = parse(lsGet(KEYS.r)); S.backups = parse(lsGet(KEYS.b)); kind = lsGet(KEYS.k) || 'go'; }
+
+/* ---- 入力の状態（追加・修正・削除・取消を順に当てはめる）。リセット＝この番号までを外す目印（履歴は消さない） ---- */
+function hiddenUpto(date) {
+  var active = {};
+  S.resets.forEach(function (x) { if (x.date !== date) return; if (x.action === 'reset') active[x.rid] = x.upto; else if (x.action === 'restore') delete active[x.ref]; });
+  var m = 0; for (var k in active) if (active[k] > m) m = active[k]; return m;
+}
+function entries(date) {
+  var cut = hiddenUpto(date), base = {}, order = [];
+  S.events.forEach(function (ev) { if (ev.op === 'add' && ev.n > cut) { base[ev.id] = { id: ev.id, kind: ev.kind, fare: ev.fare, at: ev.at, date: bizDate(ev.at), deleted: false }; order.push(ev.id); } });
+  S.events.forEach(function (ev) {
+    if (ev.op === 'add') return; var e = base[ev.target]; if (!e) return;
+    if (ev.op === 'delete') e.deleted = true; else if (ev.op === 'restore') e.deleted = false;
+    else if (ev.op === 'edit') { if (ev.kind) e.kind = ev.kind; if (ev.fare) e.fare = ev.fare; e.at = ev.at; e.date = bizDate(ev.at); }
+  });
+  return order.map(function (i) { return base[i]; }).filter(function (e) { return e.date === date; }).sort(function (a, b) { return a.at < b.at ? -1 : (a.at > b.at ? 1 : (a.id < b.id ? -1 : 1)); });
+}
+function today() { return bizDate(nowStr()); }
+function append(op, o) { var ev = { n: S.events.length + 1, id: o.id || newId(), op: op, target: o.target || '', kind: o.kind || '', fare: o.fare || 0, at: o.at || nowStr() }; if (op === 'add') ev.target = ev.id; S.events.push(ev); return ev; }
+function commit(ev) { if (save()) return true; S.events.pop(); return false; }   /* 保存できなければ、追加を取り消して、入力は残す */
+
+/* ---- 表示 ---- */
+function render() {
+  var d = today(), l = entries(d), live = l.filter(function (e) { return !e.deleted; }), go = 0, te = 0, id = 0, tot = 0, ia = 0;
+  live.forEach(function (e) { tot += e.fare; if (e.kind === 'go') go++; else if (e.kind === 'teage') te++; else { id++; ia += e.fare; } });
+  var r = go + te, est = Math.round(tot / TAX) - ia, df = est - G;
+  $('total').innerHTML = yen(tot) + '<small>円</small>'; $('est').textContent = '概算の税抜営収（参考）約' + yen(est) + '円';
+  $('diff').innerHTML = '1出番目標' + yen(G) + '円との差 <span class="' + (df >= 0 ? 'pos' : 'neg') + '">' + (df > 0 ? '＋' : (df < 0 ? '−' : '±')) + yen(Math.abs(df)) + '円</span>';
+  $('pct').textContent = '目標達成率 ' + (Math.round(est / G * 1000) / 10) + '％（概算の税抜営収÷1出番目標）';
+  $('go').innerHTML = go + '<small>件</small>'; $('te').innerHTML = te + '<small>件</small>';
+  $('gop').textContent = (r ? Math.round(go / r * 1000) / 10 : 0) + '％'; $('tep').textContent = (r ? Math.round(te / r * 1000) / 10 : 0) + '％';
+  $('rides').innerHTML = r + '<small>回</small>'; $('idle').innerHTML = id + '<small>回</small>'; $('idleamt').textContent = yen(ia) + '円';
+  var sb = $('savebar'), lv = saveLevel(); sb.className = lv.cls; sb.textContent = lv.text;
+  $('reg').disabled = !storageOk;
+  var h = $('hist'), all = l.slice().reverse(); renderUndo(d);
+  if (!all.length) { h.innerHTML = '<div class="note">まだありません</div>'; return; }
+  h.innerHTML = ''; all.forEach(function (e) {
+    var row = document.createElement('div');
+    if (editing[e.id]) { var ed = editing[e.id]; row.className = 'edit';
+      row.innerHTML = '<select data-f="kind"><option value="go">GO無線</option><option value="teage">手上げ</option><option value="idle">空転</option></select><input class="fare" data-f="fare" inputmode="numeric"><input class="time" data-f="time"><button data-a="save">保存</button><button data-a="cancel">やめる</button>';
+      row.querySelector('[data-f=kind]').value = ed.kind; row.querySelector('[data-f=fare]').value = ed.fare; row.querySelector('[data-f=time]').value = ed.time;
+      row.querySelectorAll('[data-f]').forEach(function (x) { x.oninput = function () { ed[x.dataset.f] = x.value; }; });
+      row.querySelector('[data-a=cancel]').onclick = function () { delete editing[e.id]; render(); }; row.querySelector('[data-a=save]').onclick = function () { saveEdit(e); };
+    } else { row.className = 'row' + (e.deleted ? ' del' : '');
+      row.innerHTML = '<span class="t">' + esc(String(e.at).slice(-5)) + '</span><span class="k">' + esc(KJ[e.kind] || '？') + '</span><span class="f">' + esc(yen(Number(e.fare) || 0)) + '円</span>' + (e.deleted ? '<button data-a="undo">取り消す</button>' : '<button data-a="edit">修正</button><button data-a="del">削除</button>');
+      var b; if (b = row.querySelector('[data-a=edit]')) b.onclick = function () { editing[e.id] = { kind: e.kind, fare: String(e.fare), time: e.at.slice(-5) }; render(); };
+      if (b = row.querySelector('[data-a=del]')) b.onclick = function () { var ev = append('delete', { target: e.id }); if (!commit(ev)) msg('保存できませんでした', 1); render(); };
+      if (b = row.querySelector('[data-a=undo]')) b.onclick = function () { var ev = append('restore', { target: e.id }); if (!commit(ev)) msg('保存できませんでした', 1); render(); };
+    } h.appendChild(row);
+  });
+}
+function bkCount() { var k = S.events.length - parseInt(lsGet('kb2_bk_n') || '0', 10); return k > 0 ? k : 0; }
+function saveLevel() {
+  /* 状態：保存できない／プライベート・他アプリ内ブラウザ（消える）／Safariのタブ（ホーム画面のアプリとは別の保存場所）／ホーム画面のアプリ（記録が残ることを確認済み・未確認） */
+  var bk = bkCount() ? '／バックアップ後に増えた入力 ' + bkCount() + '件（画面下の「バックアップを書き出す」で保存してください）' : '';
+  if (!storageOk) return { cls: 'bad', text: '✗ 保存できません。入力しても、残りません（登録は、できなくしています）。ホーム画面に追加した「営業入力」から開いてください' };
+  if (CTX.priv) return { cls: 'bad', text: '⚠ プライベートブラウズの可能性があります。この画面の記録は、閉じると、消えます。通常のSafariで開き、ホーム画面に追加して、アイコンから使ってください' + bk };
+  if (CTX.inApp) return { cls: 'bad', text: '⚠ 他のアプリの中のブラウザです。記録が残らないことがあります。Safariで開いて、ホーム画面に追加してください' + bk };
+  if (!CTX.standalone) return { cls: 'warn', text: '⚠ Safariのタブで開いています。ここの記録は、ホーム画面の「営業入力」アプリには、引き継がれません（保存場所が別です）。ホーム画面のアイコンから、使ってください' + (S.events.length ? '（記録 ' + S.events.length + '件）' : '') + bk };
+  if (CTX.proven) return { cls: bk ? 'warn' : '', text: '✓ 保存を確認済み（前回までの記録が残っています）。記録 ' + S.events.length + '件' + (lastSave ? '・最終 ' + lastSave : '') + bk };
+  return { cls: 'warn', text: (S.events.length ? '保存しました（記録 ' + S.events.length + '件）。' : '') + '再起動後も残るかは、まだ確認できていません。一度、アプリを閉じて、開き直して、記録が残っているか確認してください' + bk };
+}
+function msg(t, bad) { $('msg').className = bad ? 'err' : 'ok'; $('msg').textContent = t; }
+function saveEdit(e) {
+  var ed = editing[e.id], fare = parseInt(String(ed.fare).replace(/[^0-9]/g, ''), 10), m = /^(\d\d):?(\d\d)$/.exec(String(ed.time).replace(/[^0-9:]/g, ''));
+  if (!fare || fare > 200000 || !m) { msg('修正の料金（1〜200,000円）か時刻（例 09:30）が正しくありません', 1); return; }
+  var at = e.at.slice(0, 11) + m[1] + ':' + m[2], ev = append('edit', { target: e.id, kind: ed.kind, fare: fare, at: at });
+  if (!commit(ev)) { msg('保存できませんでした。修正は、そのまま残しています', 1); return; } delete editing[e.id]; render();
+}
+
+/* ---- 登録（料金を入れて押す → 保存 → 入力欄を即座に空に → 次の入力） ---- */
+function register() {
+  var raw = $('fare').value.replace(/[０-９]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 65248); }).replace(/[^0-9]/g, ''), fare = parseInt(raw, 10), now = Date.now();
+  if (now < lockUntil) return;                                                 /* 二重押し：登録の直後の、連続した押下は、無視 */
+  if (!fare || fare > 200000) { msg('料金を、数字で入れてください（1〜200,000円）', 1); $('fare').focus(); return; }
+  lockUntil = now + 700;
+  var ev = append('add', { kind: kind, fare: fare });
+  if (!commit(ev)) { lockUntil = 0; msg('保存できませんでした。入力は、そのまま残しています', 1); render(); return; }
+  $('fare').value = ''; $('fare').focus();                                      /* 即座に空欄 */
+  msg(KJ[kind] + ' ' + yen(fare) + '円 を登録しました' + (CTX.priv || CTX.inApp || !CTX.standalone ? '（⚠ 一時的な保存の可能性があります。上の表示を確認してください）' : (CTX.proven ? '（この端末に保存）' : '（保存しました。再起動後の保持は、未確認です）')), CTX.priv || CTX.inApp || !CTX.standalone ? 1 : 0); render();
+}
+function setKind(k) { kind = k; lsSet(KEYS.k, k); document.querySelectorAll('#kinds button').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.k === k ? 'true' : 'false'); }); }
+
+/* ---- 一括リセット（バックアップ → 目印。履歴は消さない）・元に戻す ---- */
+function lastActive(d) { var a = {}; S.resets.forEach(function (x) { if (x.date !== d) return; if (x.action === 'reset') a[x.rid] = x; else if (x.action === 'restore') delete a[x.ref]; }); var m = 0, o = null; for (var k in a) if (+k > m) { m = +k; o = a[k]; } return o; }
+function doReset() {
+  var d = today(), l = entries(d); if (!l.length) { msg('リセットする入力が、ありません', 1); return; }
+  var live = l.filter(function (e) { return !e.deleted; }), tot = 0; live.forEach(function (e) { tot += e.fare; });
+  $('ovp').innerHTML = '今日の入力 ' + live.length + '件（税込 ' + yen(tot) + '円）を、リセットします。<br>履歴は、バックアップされ、元に戻せます。確定した日報には、影響しません。'; $('ov').hidden = false;
+}
+function confirmReset() {
+  var d = today(), l = entries(d); if (!l.length) { $('ov').hidden = true; return; }
+  var live = l.filter(function (e) { return !e.deleted; }), tot = 0; live.forEach(function (e) { tot += e.fare; });
+  var rid = (S.resets.length ? S.resets[S.resets.length - 1].rid : 0) + 1, snap = { id: rid, date: d, at: nowStr(), count: live.length, total: tot, events: S.events.slice() };
+  S.backups.push(snap); if (S.backups.length > 20) S.backups = S.backups.slice(-20);
+  S.resets.push({ rid: rid, date: d, action: 'reset', upto: S.events.length, count: live.length, total: tot, at: nowStr() });
+  if (!save()) { S.resets.pop(); S.backups.pop(); $('ov').hidden = true; msg('保存できず、リセットしませんでした（入力は、そのままです）', 1); render(); return; }
+  $('ov').hidden = true; msg('今日の入力 ' + live.length + '件（税込' + yen(tot) + '円）をリセットしました。履歴はバックアップ済みで、元に戻せます', 0); render();
+}
+function undoReset(rid) { var d = today(); S.resets.push({ rid: S.resets.length ? S.resets[S.resets.length - 1].rid : 0, date: d, action: 'restore', ref: rid, at: nowStr() }); if (!save()) { S.resets.pop(); msg('保存できませんでした', 1); return; } msg('元に戻しました', 0); render(); }
+function renderUndo(d) { var a = $('undoarea'); a.innerHTML = ''; var l = lastActive(d); if (l) { a.appendChild(document.createTextNode('リセットしました（' + l.count + '件・税込' + yen(l.total) + '円）')); var b = document.createElement('button'); b.id = 'undo'; b.type = 'button'; b.textContent = '元に戻す'; b.onclick = function () { undoReset(l.rid); }; a.appendChild(b); } }
+
+/* ---- Macへ送る（任意）・バックアップ ---- */
+function exportLines() {
+  var lines = [], dateOf = {}; S.events.forEach(function (ev) { if (ev.op === 'add') dateOf[ev.id] = bizDate(ev.at); });
+  S.events.forEach(function (ev) { var d = dateOf[ev.target]; if (!d || ev.n <= hiddenUpto(d)) return;
+    lines.push(['官兵衛入力1', ev.id, ev.at, OPJ[ev.op], ev.op === 'delete' || ev.op === 'restore' ? '' : KOUT[ev.kind], ev.op === 'delete' || ev.op === 'restore' ? '' : ev.fare, ev.op === 'add' ? '' : ev.target].join(',')); });
+  return lines;
+}
+function deliver(name, text, mime) {
+  var o = $('out'); o.hidden = false; o.value = text;
+  try { var f = new File([text], name, { type: mime }); if (navigator.canShare && navigator.canShare({ files: [f] })) { navigator.share({ files: [f], title: name }).catch(function () {}); return; } } catch (e) {}
+  try { var a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([text], { type: mime })); a.download = name; document.body.appendChild(a); a.click(); a.remove(); } catch (e) {}
+}
+function stamp() { var d = new Date(); return d.getFullYear() + p2(d.getMonth() + 1) + p2(d.getDate()) + '_' + p2(d.getHours()) + p2(d.getMinutes()) + p2(d.getSeconds()); }
+$('exp').onclick = function () { var l = exportLines(); if (!l.length) { $('syncnote').textContent = '送る入力が、ありません'; return; } deliver('官兵衛入力_' + stamp() + '.txt', l.join('\n') + '\n', 'text/plain'); lsSet(KEYS.x, nowStr()); lsSet('kb2_bk_n', String(S.events.length)); render(); $('syncnote').textContent = l.length + '行を書き出しました。「ファイル」アプリの iCloud Drive「官兵衛入力」に保存すると、Macに取り込まれます（同じ入力は、1回だけ数えます）。'; };
+$('bak').onclick = function () { deliver('官兵衛入力_バックアップ_' + stamp() + '.json', JSON.stringify({ kind: 'kanbei-input-backup', v: 2, events: S.events, resets: S.resets, backups: S.backups }), 'application/json'); $('syncnote').textContent = '全データのバックアップを書き出しました。「ファイル」アプリなどに保存してください。'; lsSet('kb2_bk_n', String(S.events.length)); render(); };
+$('imp').onclick = function () { $('impf').click(); };
+$('impf').onchange = function () {
+  var f = this.files[0]; if (!f) return; var r = new FileReader();
+  r.onload = function () { try { var j = JSON.parse(r.result), have = {}, added = 0; S.events.forEach(function (e) { have[e.id + e.op + e.target + e.at] = 1; });
+      var bad = 0;
+      (j.events || []).forEach(function (e) {
+        var okEv = e && typeof e.id === 'string' && /^[0-9A-Za-z_-]{6,64}$/.test(e.id) && OPJ[e.op] !== undefined && /^\d{4}-\d\d-\d\d \d\d:\d\d$/.test(String(e.at)) && (e.target === '' || (typeof e.target === 'string' && /^[0-9A-Za-z_-]{0,64}$/.test(e.target))) &&
+          ((e.op === 'delete' || e.op === 'restore') ? true : (KJ[e.kind] !== undefined && typeof e.fare === 'number' && isFinite(e.fare) && e.fare >= 1 && e.fare <= 200000 && Math.floor(e.fare) === e.fare));
+        if (!okEv) { bad++; return; }
+        if (!have[e.id + e.op + e.target + e.at]) { S.events.push({ n: S.events.length + 1, id: e.id, op: e.op, target: e.target || '', kind: (e.op === 'delete' || e.op === 'restore') ? '' : e.kind, fare: (e.op === 'delete' || e.op === 'restore') ? 0 : e.fare, at: e.at }); added++; } });
+      if (!save()) throw 0; $('syncnote').textContent = 'バックアップから ' + added + '件を戻しました（すでにある記録は、そのままです）。' + (bad ? ' 形式が正しくない ' + bad + '件は、取り込みませんでした。' : ''); render(); } catch (e) { $('syncnote').textContent = 'バックアップを読み込めませんでした'; } };
+  r.readAsText(f);
+};
+
+/* ---- 起動 ---- */
+document.querySelectorAll('#kinds button').forEach(function (b) { b.onclick = function () { setKind(b.dataset.k); $('fare').focus(); }; });
+$('reg').onmousedown = function (e) { e.preventDefault(); };                    /* ボタンを押しても、料金欄から、フォーカスを奪わない（キーボードを閉じない） */
+$('reg').onclick = register; $('fare').onkeydown = function (e) { if (e.key === 'Enter') { e.preventDefault(); register(); } };
+$('resetbtn').onclick = doReset; $('ovn').onclick = function () { $('ov').hidden = true; }; $('ovy').onclick = confirmReset;
+load(); setKind(kind);
+(function () {                                                                  /* 開き方の確認と、「前回までの記録が残っている」ことの確認 */
+  var ua = navigator.userAgent || '';
+  CTX.standalone = (navigator.standalone === true) || !!(window.matchMedia && matchMedia('(display-mode: standalone)').matches);
+  CTX.inApp = /FBAN|FBAV|Instagram|Line\/|MicroMessenger|Twitter|GSA\/|CriOS|FxiOS|EdgiOS|DuckDuckGo|ChatGPT/i.test(ua);
+  if (S.events.length) { lsSet('kb2_proven', nowStr()); }                      /* 前回の記録が、いま、読めた＝再起動後も残ることを確認できた */
+  CTX.proven = !!lsGet('kb2_proven');
+  try { if (navigator.storage && navigator.storage.estimate) navigator.storage.estimate().then(function (e) { if (e && e.quota && e.quota <= 1100000000) { CTX.priv = true; render(); } }).catch(function () {}); } catch (x) {}   /* プライベートブラウズは、保存の上限が約1GBに制限される */
+})();
+render();                                                                       /* 先に、すぐ表示する（予備の保存の確認を待たない） */
+if (!S.events.length) restoreFromMirror(function (ok) { if (ok) { save(); msg('端末内のバックアップ領域から、記録を復元しました', 0); render(); } });
+
+/* ---- 端末内の保存の確認（実機チェック）：保存の状態・オフラインの準備・再起動後の保持を、画面で確かめる ---- */
+function idbGet(key, cb) { try { var q = indexedDB.open('kanbei-input', 2); q.onupgradeneeded = function () { if (!q.result.objectStoreNames.contains('s')) q.result.createObjectStore('s'); }; q.onerror = function () { cb(null); }; q.onsuccess = function () { try { var g = q.result.transaction('s').objectStore('s').get(key); g.onsuccess = function () { q.result.close(); cb(g.result === undefined ? null : g.result); }; g.onerror = function () { cb(null); }; } catch (e) { cb(null); } }; } catch (e) { cb(null); } }
+function idbPut(key, val, cb) { try { var q = indexedDB.open('kanbei-input', 2); q.onupgradeneeded = function () { if (!q.result.objectStoreNames.contains('s')) q.result.createObjectStore('s'); }; q.onerror = function () { cb(false); }; q.onsuccess = function () { try { var t = q.result.transaction('s', 'readwrite'); t.objectStore('s').put(val, key); t.oncomplete = function () { q.result.close(); cb(true); }; t.onerror = function () { cb(false); }; } catch (e) { cb(false); } }; } catch (e) { cb(false); } }
+function line(ok, t) { return '<div class="sub"><span class="' + (ok === null ? '' : (ok ? 'pos' : 'neg')) + '">' + (ok === null ? '・' : (ok ? '✓' : '✗')) + '</span> ' + t + '</div>'; }
+function diagnose() {
+  var L = [], launches = parseInt(lsGet('kb2_launches') || '0', 10), first = lsGet('kb2_first') || '', tok = lsGet('kb2_selftest');
+  var standalone = (navigator.standalone === true) || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
+  L.push(line(storageOk, '端末内の保存（localStorage）：' + (storageOk ? '使えます' : '使えません')));
+  L.push(line(standalone, 'ホーム画面のアイコンから開いている：' + (standalone ? 'はい' : 'いいえ（Safariのタブです。ホーム画面に追加して、アイコンから開いてください）')));
+  L.push(line(null, 'このアプリを開いた回数：' + launches + '回' + (first ? '（最初：' + first + '）' : '') + '　記録：' + S.events.length + '件'));
+  L.push(line(null, '通信：' + (navigator.onLine ? 'あり' : 'なし（機内モード・圏外）') + '（このアプリは、通信なしで動きます）'));
+  var wrap = function () { $('diag').innerHTML = L.join(''); };
+  var pend = 4, fin = function () { if (--pend === 0) wrap(); };
+  idbGet('state', function (v) { L.push(line(!!v && v.e !== undefined, '予備の保存（IndexedDB）：' + (v ? '使えます（' + parse(v.e).length + '件を複製）' : 'まだ書き込まれていません（入力すると、書き込まれます）'))); fin(); });
+  if (navigator.storage && navigator.storage.persisted) navigator.storage.persisted().then(function (p) { L.push(line(p ? true : null, '保存の保護：' + (p ? '許可されています' : '未許可（ホーム画面から開くと、消されにくくなります）'))); fin(); }).catch(fin); else { L.push(line(null, '保存の保護：この環境では確認できません')); fin(); }
+  if ('serviceWorker' in navigator && navigator.serviceWorker.getRegistration) navigator.serviceWorker.getRegistration().then(function (r) { var act = !!(r && r.active); if (!window.caches) { L.push(line(act, 'オフライン用の準備：' + (act ? '完了' : 'まだです'))); fin(); return; } caches.keys().then(function (ks) { return ks.length ? caches.open(ks[0]).then(function (c) { return c.keys(); }) : []; }).then(function (k) { L.push(line(act && k.length >= 5, 'オフライン用の準備（アプリ本体を、端末に保存）：' + (act && k.length >= 5 ? '完了（' + k.length + 'ファイル）' : 'まだです（通信がある場所で、もう一度、開いてください）'))); fin(); }); }).catch(fin); else { L.push(line(false, 'オフライン用の準備：この環境では使えません')); fin(); }
+  idbGet('selftest', function (v) { var a = tok, b = v;
+    if (!a && !b) L.push(line(null, '保存テスト：まだ書き込んでいません')); else L.push(line(!!a && a === b, '保存テスト：' + (a && a === b ? '残っています（' + a.split('|')[0] + ' に書き込み）' : '消えています（localStorage：' + (a ? '残る' : '消えた') + '／IndexedDB：' + (b ? '残る' : '消えた') + '）')));
+    fin(); });
+}
+$('st').onclick = function () { var t = nowStr() + '|' + Math.floor(Math.random() * 1e6); lsSet('kb2_selftest', t); idbPut('selftest', t, function () { diagnose(); msg('保存テストを書き込みました（' + t.split('|')[0] + '）。機内モードや再起動のあと、開き直して、この欄が ✓ か確認してください', 0); }); };
+(function () { var n = parseInt(lsGet('kb2_launches') || '0', 10) + 1; lsSet('kb2_launches', String(n)); if (!lsGet('kb2_first')) lsSet('kb2_first', nowStr()); })();
+setTimeout(diagnose, 400);
+try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
+if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) { navigator.serviceWorker.register('sw.js').catch(function () {}); }
+</script></body></html>
