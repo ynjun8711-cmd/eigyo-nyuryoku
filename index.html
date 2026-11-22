@@ -648,5 +648,5 @@ $('st').onclick = function () { var t = nowStr() + '|' + Math.floor(Math.random(
 (function () { var n = parseInt(lsGet('kb2_launches') || '0', 10) + 1; lsSet('kb2_launches', String(n)); if (!lsGet('kb2_first')) lsSet('kb2_first', nowStr()); })();
 setTimeout(diagnose, 400);
 try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
-if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0) { navigator.serviceWorker.register('sw.js').catch(function () {}); }
+if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0 && navigator.onLine !== false) { navigator.serviceWorker.register('sw.js').catch(function () {}); }   /* 機内モード・圏外では、更新の確認（通信）をしない。登録済みのSWは、そのまま働く */
 </script></body></html>

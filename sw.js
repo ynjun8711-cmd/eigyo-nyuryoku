@@ -4,7 +4,10 @@
    ・対策：画面（HTML）は、通信できる時は、必ず、最新を確認して表示する（通信の確認は no-cache＝一時保存を使わず、サーバーに最新かを問い合わせる）。電波が悪い・圏外の時は、3秒待って、保存済みの版で開く。
    ・版を v4 に上げ、古い保存（v3以前）は、起動時に、整理する。更新を受け取った時は、開いている画面を、1回だけ、再読み込みする。
    ・営業の記録（localStorage・IndexedDB）には、一切、触れない（ここで扱うのは、アプリ本体のキャッシュだけ）。 */
-var CACHE = 'kanbei-input-v4';
+/* v5（2026-11-22）：機内モード・圏外では、一切、通信しない（iPhoneの「機内モードをオフにするか、Wi-Fiを使用してください」の警告の対策）。
+   ・通信できない状態（navigator.onLine が false）では、画面もアイコンも、保存済みのものだけで開く。裏での更新の取得もしない。
+   ・通信できる時は、v4と同じ（最新を優先して取り、保存し直す）。営業の記録には、一切、触れない。 */
+var CACHE = 'kanbei-input-v5';
 var FILES = ['./', './index.html', './manifest.webmanifest', './icon-180.png', './icon-192.png', './icon-512.png'];
 var WAIT_MS = 3000;
 self.addEventListener('install', function (e) {
@@ -31,12 +34,17 @@ function fresh(req) {
   u.searchParams.set('_sw', String(Date.now()));
   return fetch(u.toString(), { cache: 'no-store', credentials: 'same-origin' });
 }
+function offline() { return typeof navigator !== 'undefined' && navigator.onLine === false; }   /* 機内モード・圏外：通信を試さない */
 function isPage(req) {
   var p = new URL(req.url).pathname;
   return req.mode === 'navigate' || /\/$/.test(p) || /\.html$/.test(p);
 }
 self.addEventListener('fetch', function (e) {
   if (e.request.method !== 'GET' || new URL(e.request.url).origin !== self.location.origin) return;
+  if (offline()) {                                                               /* 通信できない：保存済みだけで返す（通信を試さない＝iPhoneの警告が出ない） */
+    e.respondWith(caches.match(e.request, { ignoreSearch: true }).then(function (h) { return h || (isPage(e.request) ? (caches.match('./index.html') || caches.match('./')) : null) || new Response('', { status: 504 }); }));
+    return;
+  }
   if (isPage(e.request)) {                                                       /* 画面（HTML）：最新を優先。取れなければ、保存済みの版 */
     var net = fresh(e.request).then(function (r) {
       if (r && r.ok) { var copy = r.clone(); caches.open(CACHE).then(function (c) { c.put(e.request, copy); }); }
