@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#061538"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'none'; form-action 'none'; base-uri 'none'; object-src 'none'">
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#061538"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https://*.workers.dev http://127.0.0.1:*; frame-src blob:; form-action 'none'; base-uri 'none'; object-src 'none'">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="営業入力">
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png"><title>営業入力</title>
 <style>
@@ -138,8 +138,27 @@ header.hb .ttl{font-size:30px;letter-spacing:.06em}
 .nb{border-top:1px solid rgba(255,255,255,.18);padding:8px 0}.nb:first-of-type{border-top:0}.nb h5{margin:0;font-size:17px;font-weight:900;display:flex;justify-content:space-between;gap:8px;align-items:baseline}.nb h5 small{font-size:14px;font-weight:800;color:#FFE27A;white-space:nowrap}
 .nk{display:flex;gap:8px;font-size:14px;font-weight:700;line-height:1.5;margin-top:3px}.nk b{flex:0 0 66px;font-weight:900}.nk span{flex:1}.cf{display:inline-block;padding:0 8px;border-radius:999px;font-size:13px;font-weight:900;background:#bfe3ff;color:#0a3a80}.cf.lo{background:#ffe9a8;color:#5a3a00}.cf.no{background:#d5d9e6;color:#39405a}
 .tg{display:inline-block;margin:4px 6px 0 0;padding:0 8px;border-radius:8px;font-size:13px;font-weight:800;background:rgba(255,226,122,.18);color:#FFE27A}.drv{padding:14px 10px;border-radius:12px;background:#3a0a00;border:2px solid #ff8a5c;color:#ffd0c0;font-size:18px;font-weight:900;text-align:center}
+
+/* ===== v6：戦略分析官との一体化（試作）。html.hm＝戦略分析官を表示／html.im＝営業入力を表示（下部メニューは、戦略分析官のものを、そのまま、見せる）／どちらも無し＝従来の営業入力だけ ===== */
+body>#hf{position:fixed;left:0;top:0;width:100%;height:100%;border:0;background:#061552;z-index:0}
+#iv>*:not(#ov){position:relative;z-index:1}
+html.hm body,html.im body{padding:0;min-height:0;overflow:hidden}
+html.hm #iv{display:none}
+html.im body>#iv{position:fixed;left:0;right:0;top:0;bottom:var(--navh,0px);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:0 12px 20px;background:#040d29;z-index:5}
+html.im #iv>header.hb:not(#ov){margin-top:calc(env(safe-area-inset-top) + 8px);position:static}
+#ibk{display:none;flex:none;align-items:center;justify-content:center;min-width:58px;height:38px;margin:0 0 0 6px;padding:0 6px;font-size:14px;font-weight:700;letter-spacing:.02em;white-space:nowrap;text-decoration:none;border:1.5px solid rgba(255,211,79,.85);border-radius:11px;background:linear-gradient(180deg,#fff8cc,#FFE27A 48%,#f0b830);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;-webkit-text-stroke:.5px rgba(70,35,0,.7);-webkit-tap-highlight-color:rgba(255,211,79,.25)}
+html.im #ibk{display:flex;visibility:hidden}
+html.im header.hb .emb{margin:0 8px 0 6px;width:44px;height:44px}
+#hbk{display:none}
+html.bk body>#hbk:not(#ov){display:block;position:fixed;left:8px;top:calc(env(safe-area-inset-top) + 8px);z-index:50;margin:0;padding:0;background:none}
+html.bk body>#hbk #hbkb{display:flex;align-items:center;justify-content:center;min-width:58px;height:40px;padding:0 10px;font-size:15px;font-weight:700;letter-spacing:.02em;white-space:nowrap;text-decoration:none;color:#FFE27A;border:1.5px solid rgba(255,211,79,.9);border-radius:12px;background:rgba(5,20,78,.94);box-shadow:0 2px 8px rgba(0,0,0,.45);-webkit-tap-highlight-color:rgba(255,211,79,.3)}
+#hbke,#hbkt{display:none}
+#sp{position:fixed;left:0;top:0;width:0;height:0;visibility:hidden;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
 </style></head><body>
-<header class="hb"><span class="emb" role="img" aria-label="黒田藤巴"></span><span class="ttl">営業入力</span></header>
+<div id="hbk"><a id="hbkb" href="#" role="button" aria-label="司令室へ戻る">← 戻る</a><span id="hbke"></span><span id="hbkt"></span></div>
+<iframe id="hf" sandbox="allow-same-origin allow-scripts" title="戦略分析官" hidden></iframe><div id="sp"></div>
+<div id="iv">
+<header class="hb"><a id="ibk" href="#" role="button" aria-label="戦略分析官のホームへ戻る">← 戻る</a><span class="emb" role="img" aria-label="黒田藤巴"></span><span class="ttl">営業入力</span></header>
 <p class="note hint">営業入力（入力フォーム）。iPhoneだけで使えます（通信・Macは不要）。運転中は使わず、停車中に</p>
 <div id="savebar">保存の確認中…</div>
 <div class="plate hero"><div class="lab">税込累計（暫定売上）</div><div class="big" id="total">0<small>円</small></div>
@@ -174,12 +193,22 @@ header.hb .ttl{font-size:30px;letter-spacing:.06em}
 <button class="btn2" id="packbtn" type="button">分析パックを取り込む</button>
 <input id="packf" type="file" accept=".json,application/json" hidden>
 <div class="note" id="packmsg">Macで作った「kanbei_analysis_pack.json」（iCloud Drive「官兵衛パック」）を選びます。通信は使わず、このiPhoneの中だけに保存します。営業の記録・バックアップには、触れません。</div>
+<h3>戦略分析官の自動同期</h3>
+<div class="plate"><div class="sub" id="symsg">鍵が、まだ入っていません（最初に1回だけ、鍵ファイルを取り込みます）</div></div>
+<button class="btn2" id="sybtn" type="button">鍵ファイルを取り込む</button>
+<input id="syf" type="file" accept=".txt,text/plain" hidden>
+<button class="btn2" id="synow" type="button">今すぐ最新を確認</button>
+<button class="btn2" id="sygo" type="button">司令室（戦略分析官）を開く</button>
+<button class="btn2" id="sydg" type="button">同期の診断を表示</button>
+<pre class="note" id="sydgo" style="display:none;white-space:pre-wrap;word-break:break-all;font-size:12px"></pre>
+<div class="note">Macが日報を分析すると、暗号化された戦略分析官のデータが置き場に届きます。このアプリを開くたびに（通信があれば）自動で最新にします。通信がない時は、保存済みの版を表示します。データは、このiPhoneの中でだけ復号され、外には出ません。</div>
 <h3>端末内の保存の確認（実機チェック）</h3>
 <div class="plate" id="diag"><div class="note">確認中…</div></div>
 <button class="btn2" id="st" type="button">保存テストを書き込む（確認用・営業データには入りません）</button>
 <div class="note">使いかた：①「保存テストを書き込む」→ ②機内モードにして、アプリを終了 →③ iPhoneを再起動 → ④もう一度開いて、この欄の「保存テスト」が ✓ なら、再起動後も、保存が残っています。</div>
 <div class="foot" aria-hidden="true"></div>
 <div id="ov" hidden><div class="dlg"><b>本日の入力を、一括リセットしますか？</b><p id="ovp"></p><div class="two"><button id="ovy" type="button">リセットする</button><button id="ovn" type="button">やめる</button></div></div></div>
+</div>
 <script>
 /* 官兵衛 営業入力（iPhone単体版）。入力・保存・集計・修正・削除・リセットは、すべて、この端末の中だけで動く（通信しない）。保存先：端末内（localStorage＋IndexedDB の二重）。 */
 var G = 84000, TAX = 1.1, DAY_CHANGE_HOUR = 6, KEYS = { e: 'kb2_events', r: 'kb2_resets', b: 'kb2_backups', k: 'kb2_kind', x: 'kb2_exported' };
@@ -261,7 +290,7 @@ function render() {
   $('rides').innerHTML = r + '<small>回</small>'; $('idle').innerHTML = id + '<small>回</small>'; $('idleamt').textContent = yen(ia) + '円';
   var sb = $('savebar'), lv = saveLevel(); sb.className = lv.cls; sb.textContent = lv.text;
   $('reg').disabled = !storageOk;
-  var h = $('hist'), all = l.slice().reverse(); renderUndo(d); renderGoal(); renderNearby();
+  var h = $('hist'), all = l.slice().reverse(); renderUndo(d); renderGoal(); renderNearby(); if (typeof liveInject === 'function') liveInject();
   if (!all.length) { h.innerHTML = '<div class="note">まだありません</div>'; return; }
   h.innerHTML = ''; all.forEach(function (e) {
     var row = document.createElement('div');
@@ -582,6 +611,7 @@ load(); setKind(kind); loadGcfg(); loadBreaks(); loadPU(); renderGoal(); locUpda
   try { if (navigator.storage && navigator.storage.estimate) navigator.storage.estimate().then(function (e) { if (e && e.quota && e.quota <= 1100000000) { CTX.priv = true; render(); } }).catch(function () {}); } catch (x) {}   /* プライベートブラウズは、保存の上限が約1GBに制限される */
 })();
 render();                                                                       /* 先に、すぐ表示する（予備の保存の確認を待たない） */
+syncInit();
 if (!S.events.length) restoreFromMirror(function (ok) { if (ok) { save(); msg('端末内のバックアップ領域から、記録を復元しました', 0); render(); } });
 
 /* ---- 端末内の保存の確認（実機チェック）：保存の状態・オフラインの準備・再起動後の保持を、画面で確かめる ---- */
@@ -649,4 +679,219 @@ $('st').onclick = function () { var t = nowStr() + '|' + Math.floor(Math.random(
 setTimeout(diagnose, 400);
 try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
 if ('serviceWorker' in navigator && location.protocol.indexOf('http') === 0 && navigator.onLine !== false) { navigator.serviceWorker.register('sw.js').catch(function () {}); }   /* 機内モード・圏外では、更新の確認（通信）をしない。登録済みのSWは、そのまま働く */
+
+/* ---- 戦略分析官の自動同期（v6試作）：置き場の暗号化データ d/<名前>.bin を取得→鍵で復号→検査→端末内（IndexedDB 'home'）に保存→表示。通信は、このサイトの d/ だけ。鍵・平文は、外に出さない。営業の記録・分析パックには、触れない ---- */
+var SY = { keys: null, ver: '', seq: 0, busy: false, url: '', gen: '', hasHome: false };
+function genFmt(g) {
+  /* データを作った日時を、日本時間で、読みやすく（例：2026年11月24日 14:05）。読めない・古い形式（1970年など）は、「不明」 */
+  try {
+    var d = new Date(g); if (isNaN(d.getTime()) || d.getUTCFullYear() < 2020) return '不明';
+    var p = {}; new Intl.DateTimeFormat('ja-JP', { timeZone: 'Asia/Tokyo', year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(d).forEach(function (x) { p[x.type] = x.value; });
+    return p.year + '年' + p.month + '月' + p.day + '日 ' + p.hour + ':' + p.minute + '（日本時間）';
+  } catch (e) { return '不明'; }
+}
+function syMsg(t, warn) { var e = $('symsg'); if (e) { e.textContent = t; e.style.color = warn ? '#ffeaa0' : ''; } }
+function b64b(s) { var b = atob(String(s).replace(/\s+/g, '')), a = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) a[i] = b.charCodeAt(i); return a; }
+function hexs(buf) { return Array.prototype.map.call(new Uint8Array(buf), function (x) { return ('0' + x.toString(16)).slice(-2); }).join(''); }
+function modeSet(m) { var c = document.documentElement.classList; c.remove('hm'); c.remove('im'); c.remove('bk'); if (m) c.add(m); if (m === 'im') { var v = $('iv'); if (v) v.scrollTop = 0; navMeasure(); } if (m === 'hm') setTimeout(bkUpdate, 0); if (m === 'im') c.add('bk'); }
+function safeIns() { var e = $('sp'), cs = e ? getComputedStyle(e) : null; return { t: cs ? (parseFloat(cs.paddingTop) || 0) : 0, b: cs ? (parseFloat(cs.paddingBottom) || 0) : 0 }; }
+function scrOf(d) { return d.querySelector('.screen.kb-on') || d.querySelector('.screen:target') || d.querySelector('.screen'); }
+function navMeasure() { try { var f = $('hf'), d = f.contentDocument; if (!d) return; var sc = scrOf(d); var n = (sc && sc.querySelector('.nav')) || d.querySelector('.nav'); if (!n) return; var r = n.getBoundingClientRect(); var h = Math.max(0, Math.round(window.innerHeight - r.top)); document.documentElement.style.setProperty('--navh', h + 'px'); } catch (e) {} }
+
+/* ===== 入力データの連携（営業入力 → 営業状況・営業日報・営業分析）。同じ端末の中の記録（entries）から、今日の暫定値を作り、戦略分析官の各画面に、カードとして差し込む。通信なし・オフラインでも動く。日報で確定した値とは、別の欄（暫定）として表示する ===== */
+var LIVE_IDS = { status: 'sum', s1: 'sum', nippo: 'list', s2: 'list', sales: 'cool', s3: 'cool' };
+var LIVE_CSS = '.kb-live{border:1.5px solid rgba(255,211,79,.85);border-radius:14px;background:rgba(5,20,78,.95);padding:10px 12px;margin:0 0 10px;color:#fff;font-size:14px;line-height:1.65;text-shadow:none;position:relative;z-index:1}.kb-live h3{margin:0 0 6px;font-size:15px;color:#FFE27A;font-weight:800}.kb-live .kv{display:flex;justify-content:space-between;gap:8px;border-top:1px solid rgba(255,255,255,.12);padding:3px 0}.kb-live .kv:first-of-type{border-top:0}.kb-live .kv b{color:#fff;font-weight:800}.kb-live .sm{font-size:12px;color:#cfe0ff;margin-top:6px}.kb-live .neg{color:#ff8a7a}.kb-live .pos{color:#8fe3a0}';
+function liveStats() {
+  var d = today(), l = entries(d).filter(function (e) { return !e.deleted; }), o = { date: d, rows: l, go: 0, te: 0, id: 0, ia: 0, tot: 0, cool: [0, 1, 2, 3].map(function () { return { n: 0, s: 0, i: 0 }; }) };
+  l.forEach(function (e) {
+    o.tot += e.fare; var m = bizMin(rideTime(e).t); if (m === null) m = bizMin(e.at); var c = m === null ? 0 : coolOf(m); c = (c >= 0 && c <= 3) ? c : 0;
+    if (e.kind === 'go') { o.go++; o.cool[c].n++; o.cool[c].s += e.fare; } else if (e.kind === 'teage') { o.te++; o.cool[c].n++; o.cool[c].s += e.fare; } else { o.id++; o.ia += e.fare; o.cool[c].i++; }
+  });
+  o.r = o.go + o.te; o.est = Math.round(o.tot / TAX) - o.ia; o.df = o.est - G; o.pct = Math.round(o.est / G * 1000) / 10;
+  return o;
+}
+function liveHtml(kindKey) {
+  var o = liveStats(), h = '<h3>' + (kindKey === 'list' ? '本日の入力（iPhone・暫定）' : (kindKey === 'cool' ? '本日のクール別（iPhone・暫定）' : '本日の営業（iPhone・暫定）')) + '</h3>';
+  function kv(a, b, c) { return '<div class="kv"><span>' + a + '</span><b' + (c ? ' class="' + c + '"' : '') + '>' + b + '</b></div>'; }
+  if (kindKey === 'sum') {
+    h += kv('税込累計（空転を含む）', yen(o.tot) + '円') + kv('税込売上（空転を除く）', yen(o.tot - o.ia) + '円') + kv('概算の税抜営収', '約' + yen(o.est) + '円') + kv('乗車回数（空転を除く）', o.r + '回') + kv('GO無線／手上げ', o.go + '件／' + o.te + '件') + kv('空転', o.id + '回・' + yen(o.ia) + '円') +
+      kv('1出番目標との差', (o.df > 0 ? '＋' : (o.df < 0 ? '−' : '±')) + yen(Math.abs(o.df)) + '円', o.df >= 0 ? 'pos' : 'neg') + kv('目標達成率', o.pct + '％');
+  } else if (kindKey === 'list') {
+    if (!o.rows.length) h += '<div class="sm">まだ入力がありません</div>';
+    o.rows.slice().reverse().slice(0, 40).forEach(function (e) { h += kv(esc(String(e.at).slice(-5)) + (puOk(e) ? '（乗' + esc(e.pu.slice(-5)) + '）' : '') + '　' + esc(KJ[e.kind] || '？'), yen(Number(e.fare) || 0) + '円'); });
+  } else {
+    o.cool.forEach(function (c, i) { var cl = COOLS[i]; if (!cl) return; h += kv(esc(cl[0]) + '（' + esc(cl[1]) + '）', c.n + '回・' + yen(c.s) + '円' + (c.i ? '（空転' + c.i + '）' : '')); });
+    h += kv('合計（空転を除く）', o.r + '回・' + yen(o.tot - o.ia) + '円') + kv('GO無線の比率', (o.r ? Math.round(o.go / o.r * 1000) / 10 : 0) + '％') + kv('手上げの比率', (o.r ? Math.round(o.te / o.r * 1000) / 10 : 0) + '％');
+  }
+  return h + '<div class="sm">日報で確定するまでの暫定値です（この端末の入力から計算）。</div>';
+}
+function liveInject() {
+  try {
+    var f = $('hf'), d = f.contentDocument; if (!d || !d.body) return;
+    if (!d.getElementById('kb-live-css')) { var st = d.createElement('style'); st.id = 'kb-live-css'; st.textContent = LIVE_CSS; d.head.appendChild(st); }
+    var old = d.querySelectorAll('.kb-live'); for (var i = 0; i < old.length; i++) old[i].parentNode.removeChild(old[i]);
+    for (var id in LIVE_IDS) {
+      var sc = d.getElementById(id); if (!sc || !sc.classList || !sc.classList.contains('screen')) continue;
+      var box = d.createElement('div'); box.className = 'kb-live'; box.setAttribute('data-kb-live', LIVE_IDS[id]); box.innerHTML = liveHtml(LIVE_IDS[id]);
+      var hb = sc.querySelector('.hbar'); if (hb && hb.nextSibling) sc.insertBefore(box, hb.nextSibling); else sc.insertBefore(box, sc.firstChild);
+    }
+  } catch (e) {}
+}
+function showScreen(id) {
+  /* 画面の切り替えは、アプリ自身が行う（アドレスの「#」に頼らない：iPhoneのSafariでは、アプリ内の表示枠の中で、「#」の移動が効かない場合があるため） */
+  try {
+    var d = $('hf').contentDocument; if (!d) return false;
+    var home = d.querySelector('.screen'), t = id ? d.getElementById(id) : null;
+    if (!t || !t.classList || !t.classList.contains('screen')) t = home;
+    if (!t) return false;
+    var on = d.querySelectorAll('.screen.kb-on'); for (var i = 0; i < on.length; i++) on[i].classList.remove('kb-on');
+    t.classList.add('kb-on'); SY.cur = t.id; liveInject();
+    try { d.defaultView.scrollTo(0, 0); } catch (e) {}
+    bkUpdate(); navMeasure(); return true;
+  } catch (e) { return false; }
+}
+function bkUpdate() {
+  /* 司令室以外の画面では、アプリ専用の「← 戻る」を、最上部に固定して出す（画面の外側＝スクロールしても動かない） */
+  try {
+    var c = document.documentElement.classList, d = $('hf').contentDocument, show = false, ttl = '';
+    if (c.contains('im')) { c.add('bk'); return; }
+    if (c.contains('hm') && d) {
+      var home = d.querySelector('.screen'), cur = scrOf(d);
+      if (home && cur && cur !== home) {
+        show = true;
+      }
+    }
+    c.toggle('bk', show);
+  } catch (e) {}
+}
+function goHome() {
+  /* 「← 戻る」の動作は、これ1つ（5つの画面すべて共通）：どの画面からでも、必ず、司令室へ戻る */
+  if (document.documentElement.classList.contains('im')) modeSet('hm');
+  showScreen('');
+}
+$('hbkb').onclick = function (e) { e.preventDefault(); goHome(); };
+function homeWire() {
+  try {
+    var f = $('hf'), d = f.contentDocument; if (!d || !d.body || !d.querySelector('.screen')) return;
+    var si = safeIns(), st = d.createElement('style');
+    st.textContent = '.nav{padding-bottom:calc(6px + ' + si.b + 'px)!important}.screen{padding-bottom:calc(124px + ' + si.b + 'px)!important}body{padding-top:' + si.t + 'px}body.kbnav .screen{display:none!important}body.kbnav .screen.kb-on{display:block!important}.hbar .back{visibility:hidden!important}';   /* 上部の見出し（← 戻る・題名）を、スクロールしても、上に固定 */   /* iframeの中では、画面の安全領域が、0になる場合があるため、アプリ側で測った値を入れる */
+    d.head.appendChild(st);
+    d.addEventListener('click', function (e) {
+      var a = e.target && e.target.closest ? e.target.closest('a') : null; if (!a) return;
+      var href = a.getAttribute('href') || '';
+      if (a.classList.contains('m-input')) { e.preventDefault(); modeSet('im'); return; }          /* 営業入力：外部リンクではなく、このアプリの中の画面（確認画面は出ない） */
+      if (/^[a-z]+:/i.test(href)) { e.preventDefault(); return; }
+      if (href.charAt(0) === '#') {
+        var tg = href.length > 1 ? d.getElementById(href.slice(1)) : null;
+        if (tg && tg.classList && tg.classList.contains('screen')) { e.preventDefault(); modeSet('hm'); showScreen(href.slice(1)); }     /* 画面の切り替え：アプリ自身で行う */
+        else modeSet('hm');
+      }
+    }, true);
+    d.body.classList.add('kbnav');
+    liveInject();
+    showScreen(SY.cur || '');
+  } catch (e) {}
+}
+function htmlSafe(h) {
+  /* 表示する戦略分析官の中身の検査。スクリプト・イベント属性・javascript:・外部の読み込み・埋め込みを、持っていたら、表示しない。
+     （iPhoneのSafari＝WebKitは、スクリプトを許可しない枠の中では、アプリ側の操作（タップの受け取り）まで止める。そのため、枠に scripts を許可する代わりに、中身を検査し、枠の中の動作を、下の CSP で、全面的に禁止する） */
+  return typeof h === 'string' && /^\s*<!doctype html/i.test(h) && /<head[\s>]/i.test(h) && !/<script|<iframe|<object|<embed|<base[\s>]|<link[^>]+rel=["']?(?:import|preload|prefetch)|http-equiv|javascript:|\son[a-z]+\s*=/i.test(h);
+}
+var CSP_META = '<meta http-equiv="Content-Security-Policy" content="default-src \'none\'; style-src \'unsafe-inline\'; img-src data: blob:; font-src data:; script-src \'none\'; connect-src \'none\'; frame-src \'none\'; object-src \'none\'; base-uri \'none\'; form-action \'none\'">';
+SY.log = [];
+function slog(t) { SY.log.push(nowStr().slice(-5) + ' ' + t); if (SY.log.length > 30) SY.log.shift(); }
+function homeShow(html) {
+  /* 戦略分析官の画面を、表示枠に入れる。戻り値：表示を始められたか（検査に通らなければ false） */
+  if (!htmlSafe(html)) { slog('表示しない：内容の検査に通らない'); syMsg('表示できない内容のため、表示しませんでした', true); return false; }
+  html = html.replace(/<head[^>]*>/i, function (m) { return m + CSP_META; });
+  var f = $('hf');
+  if (SY.url) { try { URL.revokeObjectURL(SY.url); } catch (e) {} }
+  SY.url = URL.createObjectURL(new Blob([html], { type: 'text/html' })); SY.htmlLen = html.length; SY.t0 = Date.now();
+  f.onload = function () { SY.loadMs = Date.now() - SY.t0; slog('表示枠の読み込み完了 ' + SY.loadMs + 'ms'); homeWire(); };
+  f.onerror = function () { slog('表示枠の読み込みに失敗'); };
+  f.hidden = false; f.src = SY.url; SY.hasHome = true; slog('表示を開始（' + Math.round(html.length / 1024) + 'KB）');
+  var c = document.documentElement.classList; if (!c.contains('im')) modeSet('hm');
+  return true;
+}
+function syDiag() {
+  var o = [], c = document.documentElement.className, f = $('hf'), d = null; try { d = f.contentDocument; } catch (e) {}
+  var scr = d ? d.querySelectorAll('.screen').length : -1, cur = d ? ((d.querySelector('.screen.kb-on') || {}).id || '(なし)') : '(読めない)', mk = d && d.getElementById('mark') ? d.getElementById('mark').textContent.slice(0, 24) : '(なし)';
+  o.push('版の番号 ' + SY.seq + '／データ更新 ' + genFmt(SY.gen)); o.push('表示中の画面のクラス：' + (c || '(なし)') + '／表示枠：' + (f.hidden ? '非表示' : '表示') + '／' + Math.round(f.getBoundingClientRect().width) + '×' + Math.round(f.getBoundingClientRect().height));
+  o.push('戦略分析官：' + (SY.hasHome ? 'あり' : 'なし') + '／画面の数 ' + scr + '／今の画面 ' + cur + '／「版」の文字 ' + mk);
+  o.push('中身の大きさ ' + (SY.htmlLen ? Math.round(SY.htmlLen / 1024) + 'KB' : '-') + '／読み込み ' + (SY.loadMs != null ? SY.loadMs + 'ms' : '-') + '／通信 ' + (navigator.onLine === false ? 'なし' : 'あり') + '／ホーム画面から開いている ' + (CTX.standalone ? 'はい' : 'いいえ'));
+  o.push('窓口：' + (SY.keys && SY.keys.origin ? 'あり' : 'なし（同じサイトの d/）')); o.push('--- 経過 ---'); SY.log.forEach(function (x) { o.push(x); });
+  return o.join('\n');
+}
+function decryptBundle(buf) {
+  var u = new Uint8Array(buf), C = crypto.subtle, enc = new TextEncoder();
+  if (u.length < 40 || String.fromCharCode(u[0], u[1], u[2], u[3]) !== 'KBS1') return Promise.reject('形式');
+  var aad = new Uint8Array(4 + 32); aad.set(u.subarray(0, 4), 0); aad.set(enc.encode(SY.keys.name), 4);
+  return C.decrypt({ name: 'AES-GCM', iv: u.subarray(4, 16), additionalData: aad }, SY.keys.ak, u.subarray(16)).then(function (pt) {
+    var dv = new DataView(pt), hl = dv.getUint32(0), head = JSON.parse(new TextDecoder().decode(new Uint8Array(pt, 4, hl)));
+    var body = new Uint8Array(pt, 4 + hl, head.len);
+    return C.digest('SHA-256', body).then(function (h) {
+      if (hexs(h) !== head.sha256) return Promise.reject('ハッシュ');
+      if (!(head.seq > SY.seq)) return Promise.reject('古い版');                      /* 同じ・古い版への巻き戻しは、取り込まない */
+      var html = new TextDecoder().decode(body);
+      if (!htmlSafe(html)) return Promise.reject('内容');    /* 戦略分析官は、スクリプトを持たない。持っていれば、表示しない */
+      return { html: html, head: head };
+    });
+  });
+}
+function syncCheck(force) {
+  if (!SY.keys || SY.busy) return;
+  if (navigator.onLine === false) { if (SY.hasHome) syMsg('通信なし：保存済みの版（' + genFmt(SY.gen) + '）を表示しています'); return; }
+  SY.busy = true;
+  var K = SY.keys, base = (K.origin ? K.origin + '/' : '') + 'd/' + K.name, q = K.origin ? '' : '?_=' + Date.now();
+  var fo = K.origin ? { cache: 'no-store', mode: 'cors', credentials: 'omit', headers: { 'Authorization': 'Bearer ' + K.rt } } : { cache: 'no-store' };
+  fetch(base + '.v' + q, fo).then(function (r) { return r.ok ? r.text() : Promise.reject('v' + r.status); }).then(function (v) {
+    v = v.trim();
+    if (!force && v === SY.ver && SY.hasHome) { syMsg('最新です（データ更新：' + genFmt(SY.gen) + '）'); return; }
+    return fetch(base + '.bin' + q, fo).then(function (r) { return r.ok ? r.arrayBuffer() : Promise.reject('bin' + r.status); }).then(decryptBundle).then(function (res) {
+      var rec = { html: res.html, seq: res.head.seq, gen: res.head.gen, ver: v };
+      idbPut('home', rec, function (ok) {
+        if (!ok) { syMsg('保存できませんでした（今の画面は、そのままです）', 1); return; }
+        var first = !SY.hasHome; SY.seq = rec.seq; SY.ver = v; SY.gen = rec.gen; slog('受信・復号・保存が完了（版 ' + rec.seq + '）');
+        if (homeShow(rec.html)) { if (first || SY.justKeyed) { SY.justKeyed = false; modeSet('hm'); showScreen(''); } syMsg('更新しました（データ更新：' + genFmt(rec.gen) + '）'); }                   /* 表示に失敗した時は、成功の文を、上書きしない。初めての同期は、司令室を、最初に見せる */
+      });
+    });
+  }).catch(function (e) { syMsg('最新を取得できませんでした（' + (SY.hasHome ? '保存済みの版を表示します' : '営業入力は、そのまま使えます') + '）：' + (typeof e === 'string' ? e : '通信または復号に失敗'), 1); }).then(function () { SY.busy = false; });
+}
+function syOriginOk(o) { return /^https:\/\/[a-z0-9-]+(\.[a-z0-9-]+)*\.workers\.dev$/.test(o) || /^http:\/\/127\.0\.0\.1:\d+$/.test(o); }
+function syncSetKey(text, cb) {
+  /* 鍵ファイル：1行目＝鍵。（あれば）次の行に origin=https://〜.workers.dev（非公開の窓口）。窓口が無ければ、同じサイトの d/ から取る（試験版） */
+  var lines = String(text || '').split(/\r?\n/).map(function (x) { return x.trim(); }).filter(Boolean), origin = '';
+  lines.slice(1).forEach(function (l) { var m = /^origin\s*=\s*(\S+)$/.exec(l); if (m) origin = m[1].replace(/\/+$/, ''); });
+  if (origin && !syOriginOk(origin)) { syMsg('窓口のアドレスが、正しくありません', 1); if (cb) cb(false); return; }
+  var raw; try { raw = b64b(lines[0] || ''); if (raw.length !== 64) throw 0; } catch (e) { syMsg('鍵の形式が、正しくありません', 1); if (cb) cb(false); return; }
+  var C = crypto.subtle;
+  C.importKey('raw', raw.slice(0, 32), 'AES-GCM', false, ['decrypt']).then(function (ak) {
+    return C.importKey('raw', raw.slice(32), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']).then(function (hk) {
+      return C.sign('HMAC', hk, new TextEncoder().encode('file')).then(function (sig) {
+        return C.sign('HMAC', hk, new TextEncoder().encode('read')).then(function (rs) {
+          SY.keys = { ak: ak, name: hexs(sig).slice(0, 32), rt: hexs(rs), origin: origin }; SY.justKeyed = true; slog('鍵を取り込みました' + (origin ? '（窓口あり）' : ''));
+          idbPut('synckey', SY.keys, function (ok) { syMsg(ok ? '鍵を保存しました。最新を確認します…' : '鍵を保存できませんでした', !ok); if (cb) cb(ok); if (ok) syncCheck(true); });
+        });
+      });
+    });
+  }).catch(function () { syMsg('鍵を読み込めませんでした', 1); if (cb) cb(false); });
+}
+function syncInit() {
+  idbGet('synckey', function (k) {
+    idbGet('home', function (h) {
+      if (h && h.html && h.seq) { SY.seq = h.seq; SY.ver = h.ver || ''; SY.gen = h.gen || ''; homeShow(h.html); }
+      if (k && k.ak && k.name) { SY.keys = k; if (!SY.hasHome) syMsg('鍵は入っています。最新を確認します…'); syncCheck(false); } else if (!SY.hasHome) { syMsg('鍵が、まだ入っていません（最初に1回だけ、鍵ファイルを取り込みます）'); }
+      else syMsg('保存済みの版を表示しています（データ更新：' + genFmt(SY.gen) + '）');
+    });
+  });
+}
+$('ibk').onclick = function (e) { e.preventDefault(); goHome(); };
+$('sybtn').onclick = function () { $('syf').click(); };
+$('sygo').onclick = function () { if (!SY.hasHome) { syMsg('戦略分析官のデータが、まだ、ありません（鍵ファイルを取り込んでください）', 1); return; } modeSet('hm'); showScreen(''); };
+$('sydg').onclick = function () { var e = $('sydgo'); e.textContent = syDiag(); e.style.display = 'block'; };
+$('syf').onchange = function () { var f = $('syf').files && $('syf').files[0]; if (!f) return; var r = new FileReader(); r.onload = function () { syncSetKey(String(r.result || '')); }; r.readAsText(f); $('syf').value = ''; };
+$('synow').onclick = function () { if (!SY.keys) { syMsg('鍵が、まだ入っていません', 1); return; } syncCheck(true); };
+document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') syncCheck(false); });
+window.addEventListener('online', function () { syncCheck(false); });
+window.addEventListener('resize', navMeasure);
 </script></body></html>
