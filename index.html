@@ -848,7 +848,7 @@ function syncCheck(force) {
     v = v.trim();
     if (!force && v === SY.ver && SY.hasHome) { syMsg('最新です（データ更新：' + genFmt(SY.gen) + '）'); return; }
     return fetch(base + '.bin' + q, fo).then(function (r) { return r.ok ? r.arrayBuffer() : Promise.reject('bin' + r.status); }).then(decryptBundle).then(function (res) {
-      var rec = { html: res.html, seq: res.head.seq, gen: res.head.gen, ver: v };
+      var rec = { html: res.html, seq: res.head.seq, gen: res.head.gen, ver: v, kname: K.name };
       idbPut('home', rec, function (ok) {
         if (!ok) { syMsg('保存できませんでした（今の画面は、そのままです）', 1); return; }
         var first = !SY.hasHome; SY.seq = rec.seq; SY.ver = v; SY.gen = rec.gen; slog('受信・復号・保存が完了（版 ' + rec.seq + '）');
@@ -858,6 +858,14 @@ function syncCheck(force) {
   }).catch(function (e) { syMsg('最新を取得できませんでした（' + (SY.hasHome ? '保存済みの版を表示します' : '営業入力は、そのまま使えます') + '）：' + (typeof e === 'string' ? e : '通信または復号に失敗'), 1); }).then(function () { SY.busy = false; });
 }
 function syOriginOk(o) { return /^https:\/\/[a-z0-9-]+(\.[a-z0-9-]+)*\.workers\.dev$/.test(o) || /^http:\/\/127\.0\.0\.1:\d+$/.test(o); }
+function syReset() {
+  /* 鍵が変わった：版の番号は、鍵ごとの番号。前の鍵の番号（例：22）が残っていると、新しい鍵の版（例：1）を、「古い版」として、拒否してしまう。保存済みの戦略分析官（前の鍵のもの）と、版の番号だけを、消す。営業の記録・分析パック・予備保存・休憩には、一切、触れない */
+  SY.seq = 0; SY.ver = ''; SY.gen = ''; SY.hasHome = false; SY.cur = '';
+  try { $('hf').hidden = true; $('hf').src = 'about:blank'; } catch (e) {}
+  if (SY.url) { try { URL.revokeObjectURL(SY.url); } catch (e) {} SY.url = ''; }
+  modeSet(''); slog('鍵が変わったため、前の鍵の戦略分析官と版の番号を、消しました（営業の記録は、そのまま）');
+  idbPut('home', null, function () {});
+}
 function syncSetKey(text, cb) {
   /* 鍵ファイル：1行目＝鍵。（あれば）次の行に origin=https://〜.workers.dev（非公開の窓口）。窓口が無ければ、同じサイトの d/ から取る（試験版） */
   var lines = String(text || '').split(/\r?\n/).map(function (x) { return x.trim(); }).filter(Boolean), origin = '';
@@ -869,7 +877,8 @@ function syncSetKey(text, cb) {
     return C.importKey('raw', raw.slice(32), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']).then(function (hk) {
       return C.sign('HMAC', hk, new TextEncoder().encode('file')).then(function (sig) {
         return C.sign('HMAC', hk, new TextEncoder().encode('read')).then(function (rs) {
-          SY.keys = { ak: ak, name: hexs(sig).slice(0, 32), rt: hexs(rs), origin: origin }; SY.justKeyed = true; slog('鍵を取り込みました' + (origin ? '（窓口あり）' : ''));
+          var nm = hexs(sig).slice(0, 32); if (SY.keys && SY.keys.name && SY.keys.name !== nm) syReset();
+          SY.keys = { ak: ak, name: nm, rt: hexs(rs), origin: origin }; SY.justKeyed = true; slog('鍵を取り込みました' + (origin ? '（窓口あり）' : ''));
           idbPut('synckey', SY.keys, function (ok) { syMsg(ok ? '鍵を保存しました。最新を確認します…' : '鍵を保存できませんでした', !ok); if (cb) cb(ok); if (ok) syncCheck(true); });
         });
       });
@@ -879,7 +888,7 @@ function syncSetKey(text, cb) {
 function syncInit() {
   idbGet('synckey', function (k) {
     idbGet('home', function (h) {
-      if (h && h.html && h.seq) { SY.seq = h.seq; SY.ver = h.ver || ''; SY.gen = h.gen || ''; homeShow(h.html); }
+      if (h && h.html && h.seq && k && k.name && h.kname === k.name) { SY.seq = h.seq; SY.ver = h.ver || ''; SY.gen = h.gen || ''; homeShow(h.html); }        /* 今の鍵で作った保存だけ使う（前の鍵のもの・記録が無い古いものは、使わない） */
       if (k && k.ak && k.name) { SY.keys = k; if (!SY.hasHome) syMsg('鍵は入っています。最新を確認します…'); syncCheck(false); } else if (!SY.hasHome) { syMsg('鍵が、まだ入っていません（最初に1回だけ、鍵ファイルを取り込みます）'); }
       else syMsg('保存済みの版を表示しています（データ更新：' + genFmt(SY.gen) + '）');
     });
