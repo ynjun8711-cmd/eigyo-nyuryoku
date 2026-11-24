@@ -140,7 +140,7 @@ header.hb .ttl{font-size:30px;letter-spacing:.06em}
 .tg{display:inline-block;margin:4px 6px 0 0;padding:0 8px;border-radius:8px;font-size:13px;font-weight:800;background:rgba(255,226,122,.18);color:#FFE27A}.drv{padding:14px 10px;border-radius:12px;background:#3a0a00;border:2px solid #ff8a5c;color:#ffd0c0;font-size:18px;font-weight:900;text-align:center}
 
 /* ===== v6：戦略分析官との一体化（試作）。html.hm＝戦略分析官を表示／html.im＝営業入力を表示（下部メニューは、戦略分析官のものを、そのまま、見せる）／どちらも無し＝従来の営業入力だけ ===== */
-:root{--sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);--sabu:calc(var(--sab) * .5)}
+:root{--sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px);--sabu:calc(var(--sab) * .4)}
 body>#hf{position:fixed;left:0;top:var(--sat);width:100%;height:calc(100% - var(--sat) - var(--sabu));border:0;background:#061552;z-index:0}
 html.hm::before,html.im::before{content:"";position:fixed;left:0;right:0;top:0;height:var(--sat);background:#0a2a86;z-index:60;pointer-events:none}
 html.hm::after,html.im::after{content:"";position:fixed;left:0;right:0;bottom:0;height:var(--sabu);background:#051446;z-index:60;pointer-events:none}
@@ -148,7 +148,7 @@ html.hm::after,html.im::after{content:"";position:fixed;left:0;right:0;bottom:0;
 html.hm body,html.im body{padding:0;min-height:0;overflow:hidden}
 html.hm #iv{display:none}
 html.im body>#iv{position:fixed;left:0;right:0;top:var(--sat);bottom:var(--navh,0px);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:0 12px 20px;background:#040d29;z-index:5}
-html.im #iv>header.hb:not(#ov){margin-top:8px;position:static}
+html.im #iv>header.hb:not(#ov){margin-top:2px;position:static}
 #ibk{display:none;flex:none;align-items:center;justify-content:center;min-width:58px;height:38px;margin:0 0 0 6px;padding:0 6px;font-size:14px;font-weight:700;letter-spacing:.02em;white-space:nowrap;text-decoration:none;border:1.5px solid rgba(255,211,79,.85);border-radius:11px;background:linear-gradient(180deg,#fff8cc,#FFE27A 48%,#f0b830);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;-webkit-text-stroke:.5px rgba(70,35,0,.7);-webkit-tap-highlight-color:rgba(255,211,79,.25)}
 html.im #ibk{display:flex;visibility:hidden}
 html.im header.hb .emb{margin:0 8px 0 6px;width:44px;height:44px}
@@ -789,7 +789,7 @@ function homeWire() {
   try {
     var f = $('hf'), d = f.contentDocument; if (!d || !d.body || !d.querySelector('.screen')) return;
     var st = d.createElement('style');
-    st.textContent = '.nav{padding-bottom:6px!important}.screen,#home.screen{padding-bottom:124px!important}body.kbnav .screen{display:none!important}body.kbnav .screen.kb-on{display:block!important}.hbar .back{visibility:hidden!important}';   /* 画面の切り替え／見出しの「戻る」は、外側の固定ボタンに任せる。上下の安全領域は、外側（表示枠の位置）で扱う＝枠の中には、足さない */
+    st.textContent = '.nav{padding-bottom:0!important}.screen,#home.screen{padding-bottom:124px!important}.screen:not(#home){padding-top:2px!important}.hbar{height:44px!important;margin-bottom:4px!important}body.kbnav .screen{display:none!important}body.kbnav .screen.kb-on{display:block!important}.hbar .back{visibility:hidden!important}';   /* 画面の切り替え／見出しの「戻る」は、外側の固定ボタンに任せる。上下の安全領域は、外側（表示枠の位置）で扱う＝枠の中には、足さない */
     d.head.appendChild(st);
     d.addEventListener('click', function (e) {
       var a = e.target && e.target.closest ? e.target.closest('a') : null; if (!a) return;
@@ -834,6 +834,9 @@ function syDiag() {
   o.push('版の番号 ' + SY.seq + '／データ更新 ' + genFmt(SY.gen)); o.push('表示中の画面のクラス：' + (c || '(なし)') + '／表示枠：' + (f.hidden ? '非表示' : '表示') + '／' + Math.round(f.getBoundingClientRect().width) + '×' + Math.round(f.getBoundingClientRect().height));
   o.push('戦略分析官：' + (SY.hasHome ? 'あり' : 'なし') + '／画面の数 ' + scr + '／今の画面 ' + cur + '／「版」の文字 ' + mk);
   o.push('中身の大きさ ' + (SY.htmlLen ? Math.round(SY.htmlLen / 1024) + 'KB' : '-') + '／読み込み ' + (SY.loadMs != null ? SY.loadMs + 'ms' : '-') + '／通信 ' + (navigator.onLine === false ? 'なし' : 'あり') + '／ホーム画面から開いている ' + (CTX.standalone ? 'はい' : 'いいえ'));
+  var bud = ''; try { var fr0 = f.getBoundingClientRect(), nv1 = d && d.querySelector('.screen.kb-on .nav'), hb1 = d && d.querySelector('.screen.kb-on .hbar'), bk0 = $('hbkb').getBoundingClientRect();
+    bud = '余白の内訳：画面 ' + Math.round(window.screen.width) + '×' + Math.round(window.screen.height) + '／innerHeight ' + innerHeight + '／上：安全領域 ' + Math.round(fr0.top) + 'px・見出し上端まで ' + (hb1 ? Math.round(hb1.getBoundingClientRect().top + fr0.top) : '-') + 'px・戻る上端 ' + Math.round(bk0.top) + 'px／下：メニュー下端から画面下端まで ' + (nv1 ? Math.round(innerHeight - (nv1.getBoundingClientRect().bottom + fr0.top)) : '-') + 'px・メニューの高さ ' + (nv1 ? Math.round(nv1.getBoundingClientRect().height) : '-') + 'px／本文に使える高さ ' + Math.round(fr0.height) + 'px（' + Math.round(fr0.height / innerHeight * 100) + '％）／DPR ' + window.devicePixelRatio + (window.visualViewport ? '／visualViewport ' + Math.round(window.visualViewport.height) : ''); } catch (e) {}
+  o.push(bud);
   var inn = ''; try { var nv0 = d && d.querySelector('.screen.kb-on .nav'); inn = nv0 ? getComputedStyle(nv0).paddingBottom : ''; } catch (e) {} var si = safeIns(); o.push('枠の中のメニュー下余白 ' + inn); o.push('安全領域：上 ' + Math.round(si.t) + 'px／下 ' + Math.round(si.b) + 'px／表示枠 上端 ' + Math.round(f.getBoundingClientRect().top) + 'px・下端 ' + Math.round(f.getBoundingClientRect().bottom) + 'px／画面の高さ ' + innerHeight + 'px');
   o.push('窓口：' + (SY.keys && SY.keys.origin ? 'あり' : 'なし（同じサイトの d/）')); o.push('--- 経過 ---'); SY.log.forEach(function (x) { o.push(x); });
   return o.join('\n');
